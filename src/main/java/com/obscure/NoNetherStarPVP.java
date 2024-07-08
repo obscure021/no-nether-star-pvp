@@ -13,41 +13,45 @@ import net.minecraft.util.Identifier;
 import static net.minecraft.registry.Registries.ITEM;
 
 public class NoNetherStarPVP implements ModInitializer {
-	@Override
-	public void onInitialize() {
-		// Register the configuration
-		AutoConfig.register(NoPvPConfig.class, GsonConfigSerializer::new);
+    @Override
+    public void onInitialize() {
+        // Register the configuration
+        AutoConfig.register(NoPvPConfig.class, GsonConfigSerializer::new);
 
-		// Register the entity damage event callback
-		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
-			NoPvPConfig config = NoPvPConfig.get();
-			boolean inverse = config.inverse;
-			if (entity instanceof PlayerEntity target) {
-				Entity attackerEntity = source.getAttacker();
-				if (attackerEntity instanceof PlayerEntity attacker) {
-					if (shouldCancelAttack(attacker, target)) {
-						return inverse ? true : false; // Cancel damage
-					}
-				}
-			}
-			return inverse ? false : true; // Allow the damage
-		});
-	}
+        // Register the entity damage event callback
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
+            Entity attackerEntity = source.getAttacker();
 
-	private boolean shouldCancelAttack(PlayerEntity player, PlayerEntity target) {
-		NoPvPConfig config = NoPvPConfig.get();
-		Item disableItem = ITEM.get(Identifier.of(config.pvpDisableItem));
+            if (!(entity instanceof PlayerEntity target) || !(attackerEntity instanceof PlayerEntity attacker))
+                return true;
 
-		if (!config.allowPvP) {
-			return true;
-		}
+            return !shouldCancelAttack(attacker, target);
+            /*
+             Equivalent to:
+             if (shouldCancelAttack(attacker, target)) {
+                return false;
+             }
+             return true;
+            */
+        });
+    }
 
-		return hasItem(player, disableItem) && hasItem(target, disableItem);
-	}
+    private boolean shouldCancelAttack(PlayerEntity player, PlayerEntity target) {
+        NoPvPConfig config = NoPvPConfig.get();
+        Item disableItem = ITEM.get(Identifier.of(config.pvpDisableItem));
 
-	private boolean hasItem(PlayerEntity player, Item item) {
-		return player.getMainHandStack().getItem() == item ||
-				player.getOffHandStack().getItem() == item ||
-				player.getInventory().contains(new ItemStack(item));
-	}
+        if (!config.allowPvP) {
+            return true;
+        }
+
+        boolean shouldCancel = hasItem(player, disableItem) && hasItem(target, disableItem);
+
+        if (config.inverse) shouldCancel = !shouldCancel;
+
+        return shouldCancel;
+    }
+
+    private boolean hasItem(PlayerEntity player, Item item) {
+        return player.getMainHandStack().getItem() == item || player.getOffHandStack().getItem() == item || player.getInventory().contains(new ItemStack(item));
+    }
 }
