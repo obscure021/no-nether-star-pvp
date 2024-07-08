@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "com.obscure.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"ExampleMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
