@@ -3,13 +3,13 @@
 	"id": "nonetherstarpvp",
 	"version": "${version}",
 	"name": "NoNetherStarPVP",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "The **NoNetherStarPVP** mod is a Minecraft Fabric mod designed to manage player-versus-player (PvP) interactions based on the presence of a specific item, defaulting to the Nether Star. This mod provides server admins with configurable options to enable or disable PvP in various contexts, useful for **peaceful** servers.",
 	"authors": [
-		"Me!"
+		"Obscure"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/obscure021/no-nether-star-pvp/"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/nonetherstarpvp/icon.png",

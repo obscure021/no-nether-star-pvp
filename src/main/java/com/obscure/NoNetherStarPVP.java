@@ -38,15 +38,20 @@ public class NoNetherStarPVP implements ModInitializer {
 
     private boolean shouldCancelAttack(PlayerEntity player, PlayerEntity target) {
         NoPvPConfig config = NoPvPConfig.get();
-        Item disableItem = ITEM.get(Identifier.of(config.pvpDisableItem));
+        Item disableItem = ITEM.get(Identifier.of(config.pvpDisableItemID));
 
-        if (!config.allowPvP) {
+        if (!config.enablePvP) {
             return true;
         }
 
-        boolean shouldCancel = hasItem(player, disableItem) && hasItem(target, disableItem);
-
-        if (config.inverse) shouldCancel = !shouldCancel;
+        boolean shouldCancel = false;
+        if (config.onlyTargetCheck) {
+            shouldCancel = hasItem(target, disableItem);
+        } else {
+            shouldCancel = hasItem(player, disableItem) && hasItem(target, disableItem);
+        }
+        
+        if (config.useInverseLogic) shouldCancel = !shouldCancel;
 
         return shouldCancel;
     }
